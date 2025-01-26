@@ -105,3 +105,8 @@ jobs:
         aws eks update-kubeconfig --name udacity-project4 --region us-east-1
         kustomize edit set image backend=847853577083.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
         kustomize build | kubectl apply -f -
+      
+    - name: Get Backend Service URL
+      run: |
+        kubectl get svc backend-service -n default
+    
