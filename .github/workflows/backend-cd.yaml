@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'starter/backend/**'
+      - '.github/workflows/backend-cd.yaml'
 
 jobs:
   Linting:
@@ -88,14 +91,6 @@ jobs:
       run: |
         docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag 847853577083.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
         docker push 847853577083.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
-    
-    # - name: Create EKS Cluster (if not exists)
-    #   run: |
-    #     CLUSTER_NAME="udacity-project4"
-    #     REGION="us-east-1"
-    #     ROLE_ARN="arn:aws:iam::847853577083:role/eksClusterRole"
-    #     SUBNET_IDS="subnet-0b54f91a2ee589f23,subnet-0bc767912035c90d7,subnet-0ecf8b547edc9a034"
-    #     SECURITY_GROUP_IDS="sg-09aca8c80b1901144"
 
     - name: Update Kubeconfig
       run:
