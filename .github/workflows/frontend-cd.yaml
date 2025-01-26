@@ -110,4 +110,4 @@ jobs:
 
     - name: Get Frontend Service URL
       run: |
-        kubectl get svc frontend-service -n default
+        kubectl get svc frontend -n default

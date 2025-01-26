@@ -108,5 +108,5 @@ jobs:
       
     - name: Get Backend Service URL
       run: |
-        kubectl get svc backend-service -n default
+        kubectl get svc backend -n default
     
