@@ -9,7 +9,7 @@ on:
 jobs:
   Linting:
     runs-on: ubuntu-24.04
-    environment: Devlopmnet Environment
+    environment: Development Environment
 
     steps:
     - name: Checkout code
