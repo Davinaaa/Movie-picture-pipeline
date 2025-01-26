@@ -106,7 +106,29 @@ jobs:
         kustomize edit set image backend=847853577083.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
         kustomize build | kubectl apply -f -
       
-    - name: Get Backend Service URL
-      run: |
-        kubectl get svc backend -n default
+    # - name: Get Backend Service URL
+    #   run: |
+    #     kubectl get svc backend -n default
     
+    - name: Wait for Backend Service External IP
+      run: |
+        for i in {1..20}; do
+          EXTERNAL_IP=$(kubectl get svc backend -n default -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+          if [[ -n "$EXTERNAL_IP" && "$EXTERNAL_IP" != "null" ]]; then
+            echo "Backend Service is available at: $EXTERNAL_IP"
+            echo "Backend URL: http://$EXTERNAL_IP/movies" >> $GITHUB_ENV
+            break
+          fi
+          echo "Waiting for LoadBalancer to provision..."
+          sleep 30
+        done
+        if [[ -z "$EXTERNAL_IP" || "$EXTERNAL_IP" == "null" ]]; then
+          echo "Error: LoadBalancer did not provision within the expected time."
+          exit 1
+        fi
+
+    - name: Output Backend Service URL
+      run: |
+        echo "Backend Service URL: http://$BACKEND_URL/movies"
+      env:
+        BACKEND_URL: ${{ env.Backend_URL }}
