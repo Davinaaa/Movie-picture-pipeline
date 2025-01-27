@@ -90,10 +90,11 @@ jobs:
       env:
         IMAGE_TAG: latest
         REPO_NAME: frontend
+        REACT_APP_MOVIE_API_URL: "http://<backend-service-url>/movies"
       run: |
-        docker build --build-arg=REACT_APP_MOVIE_API_URL=http://backend-service.default.svc.cluster.local:5000 \
-          --tag 847853577083.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
+        docker build --build-arg REACT_APP_MOVIE_API_URL=$REACT_APP_MOVIE_API_URL --tag 847853577083.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
         docker push 847853577083.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
+
     
     - name: Update Kubeconfig
       run: |
@@ -117,7 +118,7 @@ jobs:
           EXTERNAL_IP=$(kubectl get svc frontend -n default -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
           if [[ -n "$EXTERNAL_IP" && "$EXTERNAL_IP" != "null" ]]; then
             echo "Frontend Service is available at: $EXTERNAL_IP"
-            echo "Frontend URL: http://$EXTERNAL_IP" >> $GITHUB_ENV
+            echo "FRONTEND_URL=http://$EXTERNAL_IP" >> $GITHUB_ENV
             break
           fi
           echo "Waiting for LoadBalancer to provision..."
@@ -130,6 +131,4 @@ jobs:
 
     - name: Output Frontend Service URL
       run: |
-        echo "Frontend Service URL: http://$FRONTEND_URL"
-      env:
-        FRONTEND_URL: ${{ env.Frontend_URL }}
+        echo "Frontend Service URL: $FRONTEND_URL"

@@ -92,14 +92,15 @@ jobs:
         docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag 847853577083.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
         docker push 847853577083.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
 
-    - name: Install eksctl
-      run: |
-        curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-        sudo mv /tmp/eksctl /usr/local/bin
+    # # commend it out as the cluster and nodes are already created
+    # - name: Install eksctl
+    #   run: |
+    #     curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+    #     sudo mv /tmp/eksctl /usr/local/bin
     
-    - name: Create EKS Cluster and Nodes
-      run: |
-        eksctl create cluster --name udacity-project4-2 --region us-east-1 --nodegroup-name udacity-nodes --node-type t3.small --nodes 1 --nodes-min 1 --nodes-max 2
+    # - name: Create EKS Cluster and Nodes
+    #   run: |
+    #     eksctl create cluster --name udacity-project4-2 --region us-east-1 --nodegroup-name udacity-nodes --node-type t3.small --nodes 1 --nodes-min 1 --nodes-max 2
 
     
     - name: Update Kubeconfig
@@ -126,7 +127,7 @@ jobs:
           EXTERNAL_IP=$(kubectl get svc backend -n default -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
           if [[ -n "$EXTERNAL_IP" && "$EXTERNAL_IP" != "null" ]]; then
             echo "Backend Service is available at: $EXTERNAL_IP"
-            echo "Backend URL: http://$EXTERNAL_IP/movies" >> $GITHUB_ENV
+            echo "BACKEND_URL=http://$EXTERNAL_IP/movies" >> $GITHUB_ENV
             break
           fi
           echo "Waiting for LoadBalancer to provision..."
@@ -139,6 +140,4 @@ jobs:
 
     - name: Output Backend Service URL
       run: |
-        echo "Backend Service URL: http://$BACKEND_URL/movies"
-      env:
-        BACKEND_URL: ${{ env.Backend_URL }}
+        echo "Backend Service URL: $BACKEND_URL"
