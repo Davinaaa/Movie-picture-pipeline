@@ -88,8 +88,9 @@ jobs:
       env:
         IMAGE_TAG: latest
         REPO_NAME: backend
+        BACKEND_URL: http://a0db1abd8b8314dc29681123dcf31544-983065570.us-east-1.elb.amazonaws.com
       run: |
-        docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag 847853577083.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
+        docker build --build-arg=REACT_APP_MOVIE_API_URL=$BACKEND_URL --tag 847853577083.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
         docker push 847853577083.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
 
     # # commend it out as the cluster and nodes are already created
